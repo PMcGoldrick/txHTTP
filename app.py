@@ -4,7 +4,7 @@ from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import TCP4ServerEndpoint
 
 from request import Request
-from response import Response
+from response import Response, DirectoryIndexResponse
 from common import status_codes
 
 def txHTTPMethodNotImplemented(f):
@@ -35,11 +35,11 @@ class txHTTPProtocol(LineReceiver):
             self.request.processRequest()
             resp = getattr(self, "handle" + self.request.method, self.handleERROR)()
             self.transport.write(resp.render())
+            print resp.render()
             self.transport.loseConnection()
 
-    @txHTTPMethodNotImplemented
     def handleGET(self):
-        pass
+        return DirectoryIndexResponse(self.request.uri)
 
     @txHTTPMethodNotImplemented
     def handlePOST(self):
