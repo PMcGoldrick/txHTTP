@@ -25,5 +25,4 @@ class RequestTestCase(unittest.TestCase):
         self.request.requestData = Request.requestData
         for line in self.request_lines:
             self.request.requestData.__set__(self.request, line)
-
         self.assertEqual(self.request.requestData.__get__(self.request), "\r\n".join(self.request_lines))
