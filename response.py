@@ -6,6 +6,10 @@ class Response(object):
     A default response object
     """
     def __init__(self, resp_code, body=None):
+        """
+        I build the default reponse, including status line, headers and default html body
+        build from status code message.
+        """
         self.resp_code = resp_code
         self.body = body
         self.doctype = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -52,8 +56,8 @@ class DirectoryIndexResponse(Response):
         """
         self.htaccess = None
         # Welcome to path delimiter hell
-        os_dir = directory.split("/")
-        rel_path = os.path.join(root_dir, *os_dir)
+        os_dir = os.path.join(*directory.split("/"))
+        rel_path = os.path.join(root_dir, os_dir)
         if not os.path.isdir(rel_path):
             Response.__init__(self, 404)
         elif not os.path.isfile(os.path.join(rel_path,".htaccess")):
@@ -71,11 +75,12 @@ class DirectoryIndexResponse(Response):
             # Explicitly allowed
             elif "+Indexes" in self.htaccess:
                 # `item` is a callable.
-                item ='<a href="{pth}">{name}</a>\n'.format
+                item ='<a href="/{pth}">{name}</a>\n'.format
                 # This next line may have gotten a bit... out of control
-                # Calls the above for every child directory.
+                # Calls the above for every child _directory_.
                 items = ''.join(
-                    [item(pth="/".join([directory.translate(None, "\/"), i]), name=i) for i in os.listdir(rel_path) if os.path.isdir(os.path.join(rel_path, i))]
+                    [item(pth="{}/{}".format(directory, i).strip("/") , name=i) \
+                    for i in os.listdir(rel_path) if os.path.isdir(os.path.join(rel_path, i))]
                     )
                 body = """<html>
                             <head>
