@@ -47,3 +47,4 @@ class RequestTestCase(unittest.TestCase):
         self.assertEqual(self.request.uri, "/")
         self.assertEqual(self.request.version, "HTTP/1.1")
         self.assertItemsEqual({"foo" : "bar", "baz": "bar"}, self.request.get_params)
+
