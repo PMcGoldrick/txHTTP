@@ -1,5 +1,6 @@
 from twisted.trial import unittest
 from mock import Mock
+from types import MethodType
 
 from txHTTP.request import Request
 
@@ -26,3 +27,23 @@ class RequestTestCase(unittest.TestCase):
         for line in self.request_lines:
             self.request.requestData.__set__(self.request, line)
         self.assertEqual(self.request.requestData.__get__(self.request), "\r\n".join(self.request_lines))
+
+    def test_process_request(self):
+        self.request.processRequest = MethodType(Request.processRequest, self.request)
+        self.request._raw_request = self.request_lines
+        self.request.processRequest()
+        self.assertEqual(self.request.method, "GET")
+        self.assertEqual(self.request.uri, "/")
+        self.assertEqual(self.request.version, "HTTP/1.1")
+
+    def test_process_request_get_params(self):
+        self.request_lines[0] = "GET /?foo=bar&baz=bar HTTP/1.1"
+        self.request.get_params = {}
+        self.request.processRequest = MethodType(Request.processRequest, self.request)
+        self.request.parseUri = MethodType(Request.parseUri, self.request)
+        self.request._raw_request = self.request_lines
+        self.request.processRequest()
+        self.assertEqual(self.request.method, "GET")
+        self.assertEqual(self.request.uri, "/")
+        self.assertEqual(self.request.version, "HTTP/1.1")
+        self.assertItemsEqual({"foo" : "bar", "baz": "bar"}, self.request.get_params)

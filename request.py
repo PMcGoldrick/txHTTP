@@ -26,3 +26,24 @@ class Request(object):
     @requestData.getter
     def requestData(self):
         return "\r\n".join(self._raw_request)
+
+    def processRequest(self,):
+        """
+        Parse the request data sent from the client
+        """
+        # We really only care about the status line for this
+        self.method, self.uri, self.version = self._raw_request[0].split(" ")
+        if self.method == "GET":
+            self.parseUri()
+
+    def parseUri(self):
+        """
+        Parse get parameters if there are any
+        """
+        print "ParseURI called with %s" % self.uri
+        if "?" in self.uri:
+            self.uri, tmp = self.uri.split("?")
+            tmp = tmp.split("&")
+            for kv in tmp:
+                k, v = kv.split("=")
+                self.get_params[k] = v
