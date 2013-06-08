@@ -40,7 +40,6 @@ class Request(object):
         """
         Parse get parameters if there are any
         """
-        print "ParseURI called with %s" % self.uri
         if "?" in self.uri:
             self.uri, tmp = self.uri.split("?")
             tmp = tmp.split("&")
