@@ -1,6 +1,7 @@
 from common import status_codes, root_dir
 import os
 
+
 class Response(object):
     """
     A default response object
@@ -40,10 +41,11 @@ class Response(object):
                                            status_codes[int(self.resp_code)])
         # headers: List comprehension for demo of skill only
         # don't like the hit to readability
-        txt += "\r\n".join(["{}: {}".format(k,v) for k, v in self.headers.iteritems()])
+        txt += "\r\n".join(["{}: {}".format(k, v) for k, v in self.headers.iteritems()])
         # body
         txt += "\r\n\r\n" + self.doctype + self.body
         return txt
+
 
 class DirectoryIndexResponse(Response):
     """
@@ -60,11 +62,11 @@ class DirectoryIndexResponse(Response):
         rel_path = os.path.join(root_dir, os_dir)
         if not os.path.isdir(rel_path):
             Response.__init__(self, 404)
-        elif not os.path.isfile(os.path.join(rel_path,".htaccess")):
+        elif not os.path.isfile(os.path.join(rel_path, ".htaccess")):
             Response.__init__(self, 403)
         else:
-            with open(os.path.join(rel_path,".htaccess"), "r") as f:
-                  self.htaccess = f.read()
+            with open(os.path.join(rel_path, ".htaccess"), "r") as f:
+                self.htaccess = f.read()
 
             # NOTE: This is definitely shortcutted for time and readability.
             # full spec htaccess implementation would take a while. :)
@@ -75,11 +77,11 @@ class DirectoryIndexResponse(Response):
             # Explicitly allowed
             elif "+Indexes" in self.htaccess:
                 # `item` is a callable.
-                item ='<a href="/{pth}">{name}</a>\n'.format
+                item = '<a href="/{pth}">{name}</a>\n'.format
                 # This next line may have gotten a bit... out of control
                 # Calls the above for every child _directory_.
                 items = ''.join(
-                    [item(pth="{}/{}".format(directory, i).strip("/") , name=i) \
+                    [item(pth="{}/{}".format(directory, i).strip("/"), name=i) \
                     for i in os.listdir(rel_path) if os.path.isdir(os.path.join(rel_path, i))]
                     )
                 body = """<html>
@@ -89,7 +91,7 @@ class DirectoryIndexResponse(Response):
                             <body>
                                 {dirs}
                             </body>
-                        </html>""".format(pth=directory, dirs=items )
+                        </html>""".format(pth=directory, dirs=items)
                 Response.__init__(self, 200, body=body)
             else:
                 Response.__init__(self, 403)

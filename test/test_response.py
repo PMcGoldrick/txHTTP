@@ -1,6 +1,5 @@
 from twisted.trial import unittest
 from mock import Mock
-from types import MethodType
 
 from txHTTP.response import Response
 

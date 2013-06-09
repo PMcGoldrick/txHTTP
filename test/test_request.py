@@ -20,7 +20,6 @@ class RequestTestCase(unittest.TestCase):
                             ""
                             ]
 
-
     def test_add_line_to_request_object(self):
         self.request._raw_request = []
         self.request.requestData = Request.requestData
@@ -46,5 +45,4 @@ class RequestTestCase(unittest.TestCase):
         self.assertEqual(self.request.method, "GET")
         self.assertEqual(self.request.uri, "/")
         self.assertEqual(self.request.version, "HTTP/1.1")
-        self.assertItemsEqual({"foo" : "bar", "baz": "bar"}, self.request.get_params)
-
+        self.assertItemsEqual({"foo": "bar", "baz": "bar"}, self.request.get_params)

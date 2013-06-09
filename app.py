@@ -5,16 +5,16 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 
 from request import Request
 from response import Response, DirectoryIndexResponse
-from common import status_codes
+
 
 def txHTTPMethodNotImplemented(f):
     """
     Decorator to return Not Implemented to a client
     """
     def replacement(*args, **kwargs):
-        print "unimplemented method {} called".format(f.__name__)
         return Response(501)
     return replacement
+
 
 class txHTTPProtocol(LineReceiver):
     """
@@ -35,7 +35,6 @@ class txHTTPProtocol(LineReceiver):
             self.request.processRequest()
             resp = getattr(self, "handle" + self.request.method, self.handleERROR)()
             self.transport.write(resp.render())
-            print resp.render()
             self.transport.loseConnection()
 
     def handleGET(self):
@@ -56,6 +55,7 @@ class txHTTPProtocol(LineReceiver):
     @txHTTPMethodNotImplemented
     def handleERROR(self):
         pass
+
 
 class txHTTPFactory(Factory):
     """
