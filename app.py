@@ -63,7 +63,7 @@ class txHTTPFactory(Factory):
     """
     protocol = txHTTPProtocol
 
-
-endpoint = TCP4ServerEndpoint(reactor, 8001)
-endpoint.listen(txHTTPFactory())
-reactor.run()
+if __name__ == "__main__":
+    endpoint = TCP4ServerEndpoint(reactor, 8001)
+    endpoint.listen(txHTTPFactory())
+    reactor.run()
